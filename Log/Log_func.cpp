@@ -30,7 +30,7 @@ void Log::log_here(const std::ostringstream& msg)
         delta = std::chrono::duration<double>(now - last).count() * 1000.0;
 
     last = now;
-    std::cerr << "[+" C_431 << delta << RESET "ms] ";
+    std::cerr << "[Δ" C_431 << delta << RESET "ms] ";
 #endif
 
     std::cerr << " " << msg.str() << std::endl;

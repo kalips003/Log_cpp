@@ -15,6 +15,8 @@ int main(int ac, char** av)
     int port = 42;
 
     errno = EACCES;
+    std::cout << std::endl;
+    
     LOG_ERROR_SYS("System call failed");
     LOG_ERROR("Failed to open file: " C_321 << filename);
     LOG_WARNING("Low memory detected");

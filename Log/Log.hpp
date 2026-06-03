@@ -12,19 +12,12 @@
 #define LVL_DEBUG			(1 << 4)  // 0b010000
 #define LVL_LOG				(1 << 5)  // 0b100000
 
-// ( LVL_ERROR_SYSTEM | LVL_ERROR | LVL_WARNING | LVL_INFO | LVL_DEBUG | LVL_LOG )
-#define ALL ( LVL_ERROR_SYSTEM | LVL_ERROR | LVL_WARNING | LVL_INFO | LVL_DEBUG | LVL_LOG )
+#define T_NONE      0
+#define T_ABS       (1 << 0)
+#define T_SINCE     (1 << 1)
+#define T_DELTA     (1 << 2)
 
-// LOGGING OUTPUT
-#ifndef LOG_LEVEL
-# define LOG_LEVEL ( LVL_ERROR_SYSTEM | LVL_ERROR | LVL_DEBUG | LVL_LOG)
-#endif
-
-// TERMINAL OUTPUT
-#ifndef PRINT_LEVEL
-# define PRINT_LEVEL ( LVL_ERROR_SYSTEM | LVL_ERROR | LVL_WARNING | LVL_INFO | LVL_DEBUG | LVL_LOG )
-#endif
-
+///////////////////////////////////////////////////////////////////////////////]
 
 #define LOG_PATH "log/"
 
@@ -48,35 +41,10 @@
 
 // Log.hpp
 #pragma once
+#include "define_levels.hpp"
+
 #include <sstream>
 #include <chrono>
-
-///////////////////////////////////////////////////////////////////////////////]
-///////////////////////////////////////////////////////////////////////////////]
-// TIMING
-///////////////////////////////////////////////////////////////////////////////]
-// --------------------------------------------------------------------------- >
-
-#define T_NONE      0
-#define T_ABS       (1 << 0)
-#define T_SINCE     (1 << 1)
-#define T_DELTA     (1 << 2)
-
-#ifndef PRINT_TIME_MODE
-# define PRINT_TIME_MODE ( T_ABS | T_SINCE | T_DELTA )
-#endif
-
-#ifndef LOG_TIME_MODE
-# define LOG_TIME_MODE (T_ABS | T_SINCE)
-#endif
-
-#define PRINT_TIME_FILTER (LVL_INFO | LVL_DEBUG | LVL_LOG)
-#define LOG_TIME_FILTER   (LVL_ERROR | LVL_WARNING | LVL_INFO | LVL_DEBUG | LVL_LOG)
-
-#define LOG_HERE_TIME_FILTER (T_SINCE | T_DELTA)
-///////////////////////////////////////////////////////////////////////////////]
-///////////////////////////////////////////////////////////////////////////////]
-///////////////////////////////////////////////////////////////////////////////]
 
 ///////////////////////////////////////////////////////////////////////////////]
 class Log {

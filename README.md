@@ -1,41 +1,49 @@
-## Logging System (C++ Standalone Class)
+# Log — Standalone C++ Logging Class
 
-The project includes a standalone `Log` class that can be reused in any C++ project.  
-It provides a flexible, level-based logging system with both terminal output and file logging support.
+A lightweight, standalone logging system for C++ projects.
 
-It is designed with:
-- Singleton access
-- Compile-time log filtering
-- Runtime log file generation
-- Colored terminal output
-- Automatic log file
+Designed for:
+- minimal dependencies
+- compile-time log stripping
+- configurable log levels
+- optional timestamping
+- file + terminal output
+- single tread programs
 
 ---
+
+![terminal preview](image.png)
 
 ## Features
 
-- Singleton logger (`Log::instance()`)
-- Multiple log levels:
-  - SYSTEM ERROR
-  - ERROR
-  - WARNING
-  - INFO
-  - DEBUG
-  - LOG
-- Compile-time filtering via `LOG_LEVEL` and `PRINT_LEVEL`
-- Automatic log file creation in `log/` directory
-- Timestamped log files
-- Thread-safe design not required (single-thread assumption typical 42 projects)
+- Singleton logger
+- Compile-time log filtering (zero runtime cost when disabled)
+- Multiple log levels
+- Separate file and terminal configuration
+- Timestamp support:
+  - absolute time
+  - time since start
+  - delta between logs
+- Color support (terminal only)
+- Automatic log file creation with timestamped filename
 
 ---
 
-## Usage
+## Installation
 
-### Basic initialization
+Copy the `Log` folder into your project:
 
-```C++
+Include the logger:
+
+```cpp
 #include "Log.hpp"
+```
 
+---
+
+## Basic Usage
+
+```cpp
 Log& logger = Log::instance();
 
 if (!logger.getStatus()) {
@@ -46,106 +54,144 @@ if (!logger.getStatus()) {
 
 ---
 
-### Recommended usage via macros
+## Logging Macros
 
-The class is designed to be used mainly through macros:
+Use macros for logging:
 
-```C++
-LOG_ERROR("Failed to open file: " << filename);
-LOG_WARNING("Low memory detected");
-LOG_INFO("Server started on port " << port);
-LOG_DEBUG("Request received: " << request);
-LOG_LOG("Generic log message");
-LOG_ERROR_SYS("System call failed");
-LOG_HERE("Debug checkpoint reached");
+```cpp
+LOG_ERROR_SYS("System call failed")
+LOG_ERROR("Something failed")
+LOG_WARNING("Careful: " << value)
+LOG_INFO("Server started")
+LOG_DEBUG("Debug value: " << x)
+LOG_LOG("Generic log message")
+```
+
+Special debug location:
+
+```cpp
+LOG_HERE("Reached checkpoint")
 ```
 
 ---
 
-## Log Levels
+## Configuration
 
-### Available levels
-
-- `LVL_ERROR_SYSTEM`
-- `LVL_ERROR`
-- `LVL_WARNING`
-- `LVL_INFO`
-- `LVL_DEBUG`
-- `LVL_LOG`
+All configuration is done via `DefineLevels.hpp`.
 
 ---
 
-### Compile-time control
+### Enable / Disable Levels
 
-You can control output using:
-
-```C++
-#define LOG_LEVEL   (LVL_ERROR_SYSTEM | LVL_ERROR | LVL_DEBUG | LVL_LOG)
-#define PRINT_LEVEL (LVL_ERROR_SYSTEM | LVL_ERROR | LVL_WARNING | LVL_INFO)
+```cpp
+#define LOG_LEVEL   (LVL_ERROR | LVL_DEBUG)
+#define PRINT_LEVEL (LVL_ERROR | LVL_WARNING | LVL_INFO)
 ```
 
-This allows:
-- disabling logs in production
-- keeping only critical errors
-- enabling debug logs during development
+- LOG_LEVEL → written to file
+- PRINT_LEVEL → printed to terminal
+
+---
+
+### Available Levels
+
+```cpp
+LVL_ERROR_SYSTEM
+LVL_ERROR
+LVL_WARNING
+LVL_INFO
+LVL_DEBUG
+LVL_LOG
+```
+
+---
+
+### Time Modes
+
+```cpp
+T_ABS
+T_SINCE
+T_DELTA
+```
+
+---
+
+### Globally add / remove a Time Output
+
+```cpp
+#define PRINT_TIME_MODE (T_ABS | T_SINCE | T_DELTA)
+#define LOG_TIME_MODE   (T_ABS | T_SINCE)
+```
+
+---
+
+### Filter Time Per Level
+
+```cpp
+#define PRINT_TIME_FILTER (LVL_INFO | LVL_DEBUG | LVL_LOG)
+#define LOG_TIME_FILTER   (LVL_ERROR | LVL_WARNING | LVL_INFO | LVL_DEBUG)
+```
+
+---
+
+### LOG_HERE Timing
+
+```cpp
+#define LOG_HERE_TIME_FILTER (T_SINCE | T_DELTA)
+```
+
+---
+
+## Compile-Time Stripping
+
+Logs are removed at compile time when disabled:
+
+```cpp
+#if LOG_LEVEL & LVL_DEBUG
+    LOG_DEBUG("Will compile");
+#endif
+```
+
+If a level is disabled:
+- no code is generated
+- no runtime cost
+
+Meaning you can leave logs everywhere in your code without worries of bloating the binary
 
 ---
 
 ## Log Output
 
-### Terminal output
-
-Logs are printed with colored prefixes depending on severity.
-
-### File output
-
 Logs are stored in:
 
-```text
-log/webserv_log_YYYYMMDD_HHMMSS.log
+```cpp
+#define LOG_PATH "log/"
 ```
 
-Each run generates a new timestamped file automatically.
+Files are automatically named:
 
----
-
-## Behavior Details
-
-- If the `log/` directory does not exist, it is created automatically
-- If file creation fails, logging is disabled safely
-- ANSI color codes are removed from file output
-- System errors append `strerror(errno)` automatically
-- Logging uses low-level `write()` for file output
-
----
-
-## Architecture Notes
-
-The logging system is composed of:
-
-- Singleton `Log` instance
-- Internal file descriptor (`_fd`)
-- Log level filtering via macros
-- Stream-based macro interface (`std::ostringstream`)
-- Runtime-safe initialization (`createLogging()`)
-
----
-
-## Example
-
-```C++
-LOG_INFO("Server started successfully");
-LOG_DEBUG("Listening on port " << port);
-LOG_ERROR_SYS("Socket creation failed");
+```
+log_YYYYMMDD_HHMMSS.log
 ```
 
 ---
 
-## Summary
+## Notes
 
-This logger provides a lightweight, reusable, and configurable logging system suitable for:
-- network servers
-- system-level projects
-- debugging-heavy applications
+- Not thread-safe (currently)
+- Uses POSIX functions (`write`, `gettimeofday`)
+- c++11 compatibility
+- Intended for Unix-like systems (Linux/macOS)
 
-It is fully decoupled from the Webserv project and can be reused independently.
+---
+
+## Future Improvements
+
+- Thread safety (mutex or lock-free design)
+- Per-level delta tracking
+- Async logging
+- Performance optimizations (reduce string stream usage)
+- For a quick preview, clone the project, then execute:
+```bash
+make
+```
