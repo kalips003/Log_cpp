@@ -108,11 +108,11 @@ LVL_LOG
 
 ### Time Modes
 
-```cpp
-T_ABS
-T_SINCE
-T_DELTA
-```
+Timestamps can be added to the logs:
+- Absolute current time `T_ABS`
+- Time Relative to the start of the program `T_SINCE`
+- Specific to `LOG_HERE()`, time relative the last `LOG_HERE()` call `T_DELTA`
+
 
 ---
 
