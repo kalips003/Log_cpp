@@ -1,0 +1,6 @@
+[SYS][03:23:04][+0s] System call failed
+[ERR][03:23:04][+0s] Failed to open file: [38;5;137mpath/to/file
+[WRN][03:23:04][+0s] Low memory detected
+[INF][03:23:04][+0s] Server started on port [38;5;137m42
+[DBG][03:23:04][+0s] Request received: [38;5;137mHELLO
+[LOG][03:23:04][+0s] Generic log message

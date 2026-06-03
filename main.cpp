@@ -1,4 +1,4 @@
-#include "Log2/Log.hpp"
+#include "Log_with_time/Log.hpp"
 #include <iostream>
 
 int main(int ac, char** av)
@@ -16,10 +16,10 @@ int main(int ac, char** av)
 
     errno = EACCES;
     LOG_ERROR_SYS("System call failed");
-    // LOG_ERROR("Failed to open file: " C_321 << filename);
-    // LOG_WARNING("Low memory detected");
-    // LOG_INFO("Server started on port " C_321 << port);
-    // LOG_DEBUG("Request received: " C_321 << request);
+    LOG_ERROR("Failed to open file: " C_321 << filename);
+    LOG_WARNING("Low memory detected");
+    LOG_INFO("Server started on port " C_321 << port);
+    LOG_DEBUG("Request received: " C_321 << request);
     LOG_LOG("Generic log message");
     LOG_HERE("Debug checkpoint reached");
 
