@@ -6,7 +6,7 @@ all: $(EXE)
 
 SRC := $(shell find . -name '*.cpp')
 
-$(EXE):
+$(EXE): $(SRC) Log/Log.hpp
 	@if ! g++ $(SRC) -o $(EXE); then \
 		$(call shmol_cat_error, $(RED), $(RED_L)); \
 		exit 1; \

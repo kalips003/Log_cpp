@@ -1,4 +1,4 @@
-#include "Log_with_time/Log.hpp"
+#include "Log/Log.hpp"
 #include <iostream>
 
 int main(int ac, char** av)
@@ -21,6 +21,9 @@ int main(int ac, char** av)
     LOG_INFO("Server started on port " C_321 << port);
     LOG_DEBUG("Request received: " C_321 << request);
     LOG_LOG("Generic log message");
+    LOG_HERE("Debug checkpoint reached");
+    LOG_HERE("Debug checkpoint reached");
+    LOG_HERE("Debug checkpoint reached");
     LOG_HERE("Debug checkpoint reached");
 
     std::cout << std::endl;
